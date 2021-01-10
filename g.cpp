@@ -1,5 +1,6 @@
 // 2021.01.09 2020 IUPC - G
 // by HYOSITIVE
+// Edited 2021.01.10
 
 #include <iostream>
 #include <array>
@@ -12,8 +13,8 @@ int JH(int money, array<int, 14> dailyprices) {
 
 	// 전량 매수
 	for (int i = 0; i < 14; i++) {
-		while (cash > stockprices[i]) {
-			cash = cash - stockprices[i];
+		while (cash >= stockprices[i]) {
+			cash -= stockprices[i];
 			stock++;
 		}
 	}
@@ -29,38 +30,23 @@ int SM(int money, array<int, 14> dailyprices) {
 	int stock = 0;
 	
 	for (int i = 0; i < 14; i++) {
-		// 3일차 이후만 거래 가능?
-		if (i > 1) {
+		// 4일차 이후만 거래 가능 : 3일 연속 상승/하락은 4일차부터 가능
+		if (i > 2) {
 			// 3일 연속 주가 상승 : 전매도
-			if (stockprices[i] > stockprices[i - 1] && stockprices[i - 1] > stockprices[i - 2]) {
-				cash = +stock * stockprices[i];
+			if (stockprices[i] > stockprices[i - 1] && stockprices[i - 1] > stockprices[i - 2]
+				&& stockprices[i - 2] > stockprices[i - 3]) {
+				cash += stock * stockprices[i];
 				stock = 0;
 			}
 			// 3일 연속 주가 하락 : 전매수
-			else if (stockprices[i] < stockprices[i - 1] && stockprices[i - 1] < stockprices[i - 2]) {
-				while (cash > stockprices[i]) {
-					cash = cash - stockprices[i];
+			else if (stockprices[i] < stockprices[i - 1] && stockprices[i - 1] < stockprices[i - 2]
+				&& stockprices[i - 2] < stockprices[i - 3]) {
+				while (cash >= stockprices[i]) {
+					cash -= stockprices[i];
 					stock++;
 				}
-			}
-			
-			// 아무 것도 아닌 경우
-			else {
-				while (cash > stockprices[i]) {
-					cash = cash - stockprices[i];
-					stock++;
-				}
-			}
+			}	
 		}
-		/*
-		// 1, 2일차
-		else {
-			while (cash > stockprices[i]) {
-				cash = cash - stockprices[i];
-				stock++;
-			}
-		}
-		*/
 	}
 
 	// 최종 자산
